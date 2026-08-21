@@ -6,7 +6,8 @@ on:
     - cron: '0 10 * * *'
   workflow_dispatch:        # lets you trigger a rebuild by hand from the Actions tab
   push:
-    paths:                  # rebuild immediately when the generator changes
+    paths:                  # rebuild immediately when the design or generator changes
+      - 'template.html'     # <- edit THIS by hand (side bets, styling, copy)
       - 'build.py'
       - '.github/workflows/update.yml'
 
