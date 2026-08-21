@@ -1,517 +1,123 @@
 <!DOCTYPE html>
-<script type="application/json" id="cowork-artifact-meta">
-{
-  "name": "Fpl Wagers",
-  "schemaVersion": 1,
-  "description": "FPL Wagers 2026/27 — the main 损友俱乐部 Season 8 mini-league bet (7 players, $10 per 4-GW block plus a $30 season pot, winner-takes-all with 2nd breaking even) with a block-by-block results ledger and running P&L, plus the four EPL side bets (ZY vs RX x3, JEM vs RX x1) and their settlement-by-outcome table.",
-  "mcpTools": [],
-  "mcpServerNames": []
-}
-</script>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FPL Wagers</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FPL Wagers · 损友俱乐部 S8</title>
 <style>
-  :root{
-    --bg:#f5f7fa; --card:#ffffff; --line:#e2e6ec; --ink:#1b2027; --muted:#6a7381;
-    --zy:#1d5fd0; --rx:#c0392b; --jem:#6d3fc4; --jr:#0c6b74; --good:#12744a; --bad:#c0392b; --accent:#9a6108;
-    --shadow:0 1px 2px rgba(20,28,42,.05),0 2px 10px rgba(20,28,42,.05);
+  :root {
+    --bg:#0e1117; --panel:#161b22; --line:#273039;
+    --ink:#e6edf3; --dim:#8b949e; --accent:#58a6ff;
+    --up:#3fb950; --down:#f85149;
   }
-  *{box-sizing:border-box}
-  body{margin:0;background:var(--bg);color:var(--ink);
-    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
-    line-height:1.5;padding:28px 16px 60px}
-  .wrap{max-width:880px;margin:0 auto}
-  h1{font-size:22px;margin:0 0 4px;letter-spacing:.2px}
-  .sub{color:var(--muted);font-size:13px;margin-bottom:22px}
-  .tag{display:inline-block;font-size:11px;padding:2px 8px;border-radius:20px;border:1px solid var(--line);color:var(--muted);margin-left:6px}
-  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 18px;margin-bottom:14px;
-    box-shadow:var(--shadow)}
-  .bet-head{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap}
-  .bet-title{font-size:16px;font-weight:600}
-  .odds{font-size:13px;color:var(--accent);font-weight:600;white-space:nowrap}
-  .sides{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
-  .side{border:1px solid var(--line);border-radius:10px;padding:12px;background:#fbfcfd}
-  .who{font-size:12px;font-weight:700;letter-spacing:.5px;text-transform:uppercase}
-  .zy .who{color:var(--zy)} .rx .who{color:var(--rx)} .jem .who{color:var(--jem)} .jr .who{color:var(--jr)}
-  .pos{font-size:13px;color:var(--muted);margin:4px 0 8px}
-  .win{font-size:13px}
-  .win b{color:var(--good)} .lose b{color:var(--bad)}
-  .win,.lose{font-size:12.5px;margin-top:2px}
-  table{width:100%;border-collapse:collapse;margin-top:10px;font-size:13px}
-  th,td{padding:9px 8px;text-align:center;border-bottom:1px solid #edf0f4}
-  thead th{border-bottom:1px solid var(--line)}
-  tbody tr:last-child td{border-bottom:none}
-  th{color:var(--muted);font-weight:600;font-size:11.5px;text-transform:uppercase;letter-spacing:.4px}
-  td.scen,th.scen{text-align:left}
-  td.scen{color:var(--ink)}
-  .zycell{color:var(--zy);font-weight:600}
-  .rxcell{color:var(--rx);font-weight:600}
-  .jemcell{color:var(--jem);font-weight:600}
-  .jrcell{color:var(--jr);font-weight:600}
-  .pos-net{color:var(--good);font-weight:600}
-  .neg-net{color:var(--bad);font-weight:600}
-  .zero-net{color:var(--muted);font-weight:600}
-  .foot{color:var(--muted);font-size:12px;margin-top:18px}
-  .summary{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:6px}
-  .summary-4{grid-template-columns:repeat(4,1fr)}
-  .sbox{border:1px solid var(--line);border-radius:10px;padding:14px;text-align:center;
-    background:var(--card);box-shadow:var(--shadow)}
-  .sbox .lbl{font-size:11.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.4px}
-  .sbox .big{font-size:20px;font-weight:700;margin-top:4px}
-  h2{font-size:14px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin:30px 0 10px;
-    border-top:1px solid var(--line);padding-top:18px}
-  h2:first-of-type{border-top:none;padding-top:0}
-  h3{font-size:13px;font-weight:600;margin:0 0 2px}
-  .pairing{font-size:12px;color:var(--muted);border-left:2px solid var(--line);padding-left:10px;margin:0 0 12px}
-  .pots{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-  .pot{border:1px solid var(--line);border-radius:12px;padding:14px 16px;background:var(--card);
-    box-shadow:var(--shadow)}
-  .pot .kicker{font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--accent);font-weight:700}
-  .pot .amt{font-size:24px;font-weight:700;margin:4px 0 2px}
-  .pot ul{margin:8px 0 0;padding-left:16px;font-size:12.5px;color:var(--muted)}
-  .pot li{margin-bottom:2px}
-  .pot li b{color:var(--ink);font-weight:600}
-  .pending{color:var(--muted);font-style:italic}
-  .live{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--good);margin-right:6px;vertical-align:1px}
-  .name{text-align:left;font-weight:600}
-  .team{text-align:left;color:var(--muted);font-size:12px}
-  .note{font-size:12px;color:var(--muted);margin-top:10px}
-  a{color:var(--zy);text-decoration:none}
-  /* live block */
-  .hero{background:linear-gradient(180deg,#eaf0f8 0%,var(--card) 62%);border:1px solid #d3dae6;
-    border-radius:14px;padding:16px 18px 8px;margin-bottom:14px;box-shadow:var(--shadow)}
-  .hero-top{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:2px}
-  .hero-title{font-size:17px;font-weight:700}
-  .pill{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;
-    padding:3px 10px;border-radius:20px;white-space:nowrap}
-  .pill.prog{background:#fdf3e0;color:var(--accent);border:1px solid #f0dcb4}
-  .pill.done{background:#e6f4ec;color:var(--good);border:1px solid #bde0cc}
-  .asof{font-size:11.5px;color:var(--muted)}
-  table.live-tbl td{border-bottom:1px solid #edf0f4}
-  tr.leader td{background:#eef7f2}
-  tr.leader td.name{color:var(--good)}
-  .gw{color:var(--muted);font-variant-numeric:tabular-nums}
-  .tot{font-weight:700;font-variant-numeric:tabular-nums;font-size:14px}
-  .gap{color:var(--muted);font-variant-numeric:tabular-nums;font-size:12px}
-  .proj{font-size:12px;font-weight:600}
-  .crown{font-size:11px;color:var(--accent);margin-left:4px}
-  /* section tabs */
-  .tabs{display:flex;gap:6px;background:#e9edf3;border:1px solid var(--line);border-radius:12px;
-    padding:5px;margin:0 0 22px}
-  .tab{flex:1;appearance:none;background:transparent;border:0;color:var(--muted);cursor:pointer;
-    font:inherit;font-size:13.5px;font-weight:600;padding:9px 10px;border-radius:8px;
-    transition:background .15s,color .15s;text-align:center}
-  .tab:hover{color:var(--ink)}
-  .tab[aria-selected="true"]{background:var(--card);color:var(--ink);
-    box-shadow:0 1px 2px rgba(20,28,42,.10),0 2px 6px rgba(20,28,42,.06)}
-  .tab .cnt{display:inline-block;font-size:11px;font-weight:700;color:var(--muted);margin-left:6px}
-  .tab[aria-selected="true"] .cnt{color:var(--accent)}
-  .pane[hidden]{display:none}
-  .pane h2:first-of-type{border-top:none;padding-top:0}
-  @media(max-width:620px){.summary,.pots{grid-template-columns:1fr}.sides{grid-template-columns:1fr}}
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink);
+    font:15px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif; }
+  .wrap { max-width:1040px; margin:0 auto; padding:32px 20px 64px; }
+  h1 { font-size:26px; margin:0 0 4px; letter-spacing:-.4px; }
+  h1 .sub { display:block; font-size:13px; font-weight:400; color:var(--dim);
+    margin-top:6px; letter-spacing:0; }
+  h2 { font-size:13px; text-transform:uppercase; letter-spacing:.09em;
+    color:var(--dim); margin:34px 0 10px; font-weight:600; }
+  .banner { background:var(--panel); border:1px solid var(--line);
+    border-left:3px solid var(--accent); border-radius:6px;
+    padding:11px 14px; font-size:13.5px; color:var(--dim); margin:18px 0 8px; }
+  table { width:100%; border-collapse:collapse; background:var(--panel);
+    border:1px solid var(--line); border-radius:8px; overflow:hidden; }
+  th { text-align:left; font-size:11px; text-transform:uppercase;
+    letter-spacing:.07em; color:var(--dim); font-weight:600;
+    padding:10px 12px; border-bottom:1px solid var(--line); }
+  td { padding:10px 12px; border-bottom:1px solid var(--line); font-size:14px; }
+  tr:last-child td { border-bottom:none; }
+  .num, th.num { text-align:right; }
+  .pos { color:var(--dim); width:34px; }
+  .name { font-weight:600; }
+  .mono { font-variant-numeric:tabular-nums;
+    font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:13px; }
+  .muted { color:var(--dim); }
+  .up { color:var(--up); } .down { color:var(--down); } .flat { color:var(--dim); }
+  .pill { display:inline-block; padding:2px 8px; border-radius:99px;
+    font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:.05em; }
+  .s-settled { background:rgba(63,185,80,.14); color:var(--up); }
+  .s-live { background:rgba(88,166,255,.14); color:var(--accent); }
+  .s-idle { background:rgba(139,148,158,.12); color:var(--dim); }
+  footer { margin-top:38px; padding-top:16px; border-top:1px solid var(--line);
+    font-size:12px; color:var(--dim); }
+  .scroll { overflow-x:auto; }
+  @media (max-width:640px) { .wrap { padding:22px 14px 48px; } h1 { font-size:21px; } }
 </style>
 </head>
 <body>
 <div class="wrap">
-  <h1>FPL Wagers<span class="tag">2026/27 · updated 21 Aug 2026</span></h1>
-  <div class="sub">The main mini-league bet, plus six EPL side bets on the title race and where Liverpool land.</div>
 
-  <div class="tabs" role="tablist">
-    <button class="tab" role="tab" id="tab-main" aria-controls="sec-main" aria-selected="true">Main bet<span class="cnt">7 players</span></button>
-    <button class="tab" role="tab" id="tab-side" aria-controls="sec-side" aria-selected="false">Side bets<span class="cnt">6 bets</span></button>
+  <h1>FPL Wagers
+    <span class="sub">损友俱乐部 · Season 8 · 2026/27 · updated 21 Aug 2026</span>
+  </h1>
+
+  <div class="banner">Season has not started. GW1 deadline Fri 21 Aug 2026, 17:30 UTC.</div>
+
+  <h2>Live block · B1 · GW 1–4
+      · 0/4 final</h2>
+  <table>
+    <thead><tr><th class="pos">#</th><th>Manager</th><th class="num">Block pts</th></tr></thead>
+    <tbody>
+<tr><td class="pos">1</td><td class="name">AC</td><td class="num">0</td></tr>
+<tr><td class="pos">1</td><td class="name">JR</td><td class="num">0</td></tr>
+<tr><td class="pos">1</td><td class="name">Jeremy</td><td class="num">0</td></tr>
+<tr><td class="pos">1</td><td class="name">Kaleb</td><td class="num">0</td></tr>
+<tr><td class="pos">1</td><td class="name">RX</td><td class="num">0</td></tr>
+<tr><td class="pos">1</td><td class="name">Willis</td><td class="num">0</td></tr>
+<tr><td class="pos">1</td><td class="name">Zac</td><td class="num">0</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Block ledger</h2>
+  <div class="scroll">
+  <table>
+    <thead><tr><th>Block</th><th>Gameweeks</th><th>Status</th>
+      <th>Winner / leader</th><th>2nd</th><th>Net P&amp;L</th></tr></thead>
+    <tbody>
+<tr><td class="name">B1</td><td class="muted">GW 1–4</td><td><span class="pill s-idle">not started</span></td><td><span class="muted">—</span></td><td>—</td><td class="mono"><span class="muted">—</span></td></tr>
+<tr><td class="name">B2</td><td class="muted">GW 5–8</td><td><span class="pill s-idle">not started</span></td><td><span class="muted">—</span></td><td>—</td><td class="mono"><span class="muted">—</span></td></tr>
+<tr><td class="name">B3</td><td class="muted">GW 9–12</td><td><span class="pill s-idle">not started</span></td><td><span class="muted">—</span></td><td>—</td><td class="mono"><span class="muted">—</span></td></tr>
+<tr><td class="name">B4</td><td class="muted">GW 13–16</td><td><span class="pill s-idle">not started</span></td><td><span class="muted">—</span></td><td>—</td><td class="mono"><span class="muted">—</span></td></tr>
+<tr><td class="name">B5</td><td class="muted">GW 17–20</td><td><span class="pill s-idle">not started</span></td><td><span class="muted">—</span></td><td>—</td><td class="mono"><span class="muted">—</span></td></tr>
+<tr><td class="name">B6</td><td class="muted">GW 21–24</td><td><span class="pill s-idle">not started</span></td><td><span class="muted">—</span></td><td>—</td><td class="mono"><span class="muted">—</span></td></tr>
+<tr><td class="name">B7</td><td class="muted">GW 25–28</td><td><span class="pill s-idle">not started</span></td><td><span class="muted">—</span></td><td>—</td><td class="mono"><span class="muted">—</span></td></tr>
+<tr><td class="name">B8</td><td class="muted">GW 29–32</td><td><span class="pill s-idle">not started</span></td><td><span class="muted">—</span></td><td>—</td><td class="mono"><span class="muted">—</span></td></tr>
+<tr><td class="name">B9</td><td class="muted">GW 33–36</td><td><span class="pill s-idle">not started</span></td><td><span class="muted">—</span></td><td>—</td><td class="mono"><span class="muted">—</span></td></tr>
+<tr><td class="name">B10</td><td class="muted">GW 37–38</td><td><span class="pill s-idle">not started</span></td><td><span class="muted">—</span></td><td>—</td><td class="mono"><span class="muted">—</span></td></tr>
+      <tr><td class="name">Season</td><td class="muted">GW 1–38</td>
+        <td><span class="pill s-idle">not started</span></td>
+        <td><span class="muted">—</span></td><td>—</td><td class="mono"><span class="muted">—</span></td></tr>
+    </tbody>
+  </table>
   </div>
 
-  <!-- ============ SECTION 1 · MAIN BET ============ -->
-  <section class="pane" id="sec-main" role="tabpanel" aria-labelledby="tab-main">
-  <h2>Main bet · 损友俱乐部 Season 8</h2>
-  <div class="pairing"><span class="live"></span>FPL Invitational Classic league <b>589773</b> · 7 managers · <a href="https://fantasy.premierleague.com/leagues/589773/standings/c">standings</a></div>
+  <h2>Cumulative P&amp;L · 0 of 10 blocks booked</h2>
+  <table>
+    <thead><tr><th>Manager</th><th class="num">Net</th></tr></thead>
+    <tbody>
+<tr><td class="name">RX</td><td class="num mono flat">$0</td></tr>
+<tr><td class="name">AC</td><td class="num mono flat">$0</td></tr>
+<tr><td class="name">Willis</td><td class="num mono flat">$0</td></tr>
+<tr><td class="name">Kaleb</td><td class="num mono flat">$0</td></tr>
+<tr><td class="name">Jeremy</td><td class="num mono flat">$0</td></tr>
+<tr><td class="name">JR</td><td class="num mono flat">$0</td></tr>
+<tr><td class="name">Zac</td><td class="num mono flat">$0</td></tr>
+    </tbody>
+  </table>
 
-  <div class="pots">
-    <div class="pot">
-      <div class="kicker">Block bet · every 4 gameweeks</div>
-      <div class="amt">$10 <span style="font-size:14px;color:var(--muted);font-weight:500">per person</span></div>
-      <div style="font-size:12.5px;color:var(--muted)">Pot per block: <b style="color:var(--ink)">$70</b></div>
-      <ul>
-        <li><b>Winner</b> takes all → +$60 gross, <b>+$50 net</b></li>
-        <li><b>2nd</b> breaks even → gets $10 back, <b>$0 net</b></li>
-        <li>3rd–7th → <b>−$10</b> each</li>
-        <li>10 blocks across the season</li>
-      </ul>
-    </div>
-    <div class="pot">
-      <div class="kicker">Season bet · full 38 gameweeks</div>
-      <div class="amt">$30 <span style="font-size:14px;color:var(--muted);font-weight:500">per person</span></div>
-      <div style="font-size:12.5px;color:var(--muted)">Pot: <b style="color:var(--ink)">$210</b></div>
-      <ul>
-        <li><b>Winner</b> → $150 gross, <b>+$120 net</b></li>
-        <li><b>2nd</b> → $60 gross, <b>+$30 net</b></li>
-        <li>3rd–7th → <b>−$30</b> each</li>
-        <li>Settled on final overall league table</li>
-      </ul>
-    </div>
-  </div>
+  <footer>
+    Rebuilt daily at 10:00 UTC (6pm SGT) from the official FPL API by GitHub
+    Actions. Blocks show live totals but book no P&amp;L until every gameweek in
+    them is finished and data-checked. Blocks: $10 each, $70 pot — winner +$50,
+    2nd $0, 3rd–7th −$10. Season: $30 each, $210 pot — winner +$120, 2nd +$30,
+    3rd–7th −$30. Ties split the combined prize for the tied places evenly;
+    FPL's own tiebreak is not used.
+    <br>Built 2026-08-21 14:27 UTC.
+  </footer>
 
-  <div class="note">Total in play across the season: <b style="color:var(--ink)">$910</b> ($700 in block pots + $210 season pot). Full buy-in per person is <b style="color:var(--ink)">$130</b> — the maximum anyone can lose. Best case is winning all 10 blocks plus the season: <b style="color:var(--good)">+$620</b>. Ties split the combined prize for the positions involved.</div>
-
-  <!-- LIVE-BLOCK:START -->
-  <div class="hero">
-    <div class="hero-top">
-      <span class="hero-title">Live · Block 1 <span style="color:var(--muted);font-weight:500">· GW 1–4</span></span>
-      <span class="pill prog">in progress · 0 of 4 GWs final</span>
-    </div>
-    <div class="asof">Not started — GW1 deadline Fri 21 Aug 2026, 18:30 UK. Refreshes daily at 6pm SGT.</div>
-    <table class="live-tbl">
-      <thead>
-        <tr><th class="scen">#</th><th class="scen">Player</th><th>GW1</th><th>GW2</th><th>GW3</th><th>GW4</th><th>Block pts</th><th>Gap</th><th>If it ended now</th></tr>
-      </thead>
-      <tbody>
-        <tr><td class="scen">—</td><td class="name">RX</td><td class="gw">—</td><td class="gw">—</td><td class="gw">—</td><td class="gw">—</td><td class="tot">0</td><td class="gap">—</td><td class="proj pending">—</td></tr>
-        <tr><td class="scen">—</td><td class="name">AC</td><td class="gw">—</td><td class="gw">—</td><td class="gw">—</td><td class="gw">—</td><td class="tot">0</td><td class="gap">—</td><td class="proj pending">—</td></tr>
-        <tr><td class="scen">—</td><td class="name">Willis</td><td class="gw">—</td><td class="gw">—</td><td class="gw">—</td><td class="gw">—</td><td class="tot">0</td><td class="gap">—</td><td class="proj pending">—</td></tr>
-        <tr><td class="scen">—</td><td class="name">Kaleb</td><td class="gw">—</td><td class="gw">—</td><td class="gw">—</td><td class="gw">—</td><td class="tot">0</td><td class="gap">—</td><td class="proj pending">—</td></tr>
-        <tr><td class="scen">—</td><td class="name">Jeremy</td><td class="gw">—</td><td class="gw">—</td><td class="gw">—</td><td class="gw">—</td><td class="tot">0</td><td class="gap">—</td><td class="proj pending">—</td></tr>
-        <tr><td class="scen">—</td><td class="name">JR</td><td class="gw">—</td><td class="gw">—</td><td class="gw">—</td><td class="gw">—</td><td class="tot">0</td><td class="gap">—</td><td class="proj pending">—</td></tr>
-        <tr><td class="scen">—</td><td class="name">Zac</td><td class="gw">—</td><td class="gw">—</td><td class="gw">—</td><td class="gw">—</td><td class="tot">0</td><td class="gap">—</td><td class="proj pending">—</td></tr>
-      </tbody>
-    </table>
-    <div class="note" style="margin:6px 0 10px">Provisional. "If it ended now" is what each person would collect on today's block totals — it is not booked until all 4 gameweeks are finalised.</div>
-  </div>
-  <!-- LIVE-BLOCK:END -->
-
-  <h3 style="margin-top:24px">Managers</h3>
-  <div class="card" style="padding-top:6px">
-    <table>
-      <thead>
-        <tr><th class="scen">Player</th><th class="scen">FPL team</th><th class="scen">Registered as</th></tr>
-      </thead>
-      <tbody>
-        <tr><td class="name">RX</td><td class="team">I Call Pzolis</td><td class="team">Ah Ren Xuan Tan</td></tr>
-        <tr><td class="name">AC</td><td class="team">Bo tah bo Lampard</td><td class="team">Aaron Choo</td></tr>
-        <tr><td class="name">Willis</td><td class="team">WNYQ</td><td class="team">Willis Ng</td></tr>
-        <tr><td class="name">Kaleb</td><td class="team">greatgrandfather2026</td><td class="team">kaleb Chan</td></tr>
-        <tr><td class="name">Jeremy</td><td class="team">Michael Carry!</td><td class="team">Jeremy Teo</td></tr>
-        <tr><td class="name">JR</td><td class="team">Salah liao</td><td class="team">Jun Rong Foo</td></tr>
-        <tr><td class="name">Zac</td><td class="team">One Andoni One</td><td class="team">Zhong Jie Zac Tan</td></tr>
-      </tbody>
-    </table>
-  </div>
-
-  <!-- BLOCK-LEDGER:START -->
-  <h3 style="margin-top:24px">Block ledger</h3>
-  <div class="card" style="padding-top:6px">
-    <table>
-      <thead>
-        <tr><th class="scen">Block</th><th>Gameweeks</th><th>Winner (+$50)</th><th>2nd ($0)</th><th>Status</th></tr>
-      </thead>
-      <tbody>
-        <tr><td class="scen">1</td><td>GW 1–4</td><td class="pending">—</td><td class="pending">—</td><td class="pending">not started</td></tr>
-        <tr><td class="scen">2</td><td>GW 5–8</td><td class="pending">—</td><td class="pending">—</td><td class="pending">not started</td></tr>
-        <tr><td class="scen">3</td><td>GW 9–12</td><td class="pending">—</td><td class="pending">—</td><td class="pending">not started</td></tr>
-        <tr><td class="scen">4</td><td>GW 13–16</td><td class="pending">—</td><td class="pending">—</td><td class="pending">not started</td></tr>
-        <tr><td class="scen">5</td><td>GW 17–20</td><td class="pending">—</td><td class="pending">—</td><td class="pending">not started</td></tr>
-        <tr><td class="scen">6</td><td>GW 21–24</td><td class="pending">—</td><td class="pending">—</td><td class="pending">not started</td></tr>
-        <tr><td class="scen">7</td><td>GW 25–28</td><td class="pending">—</td><td class="pending">—</td><td class="pending">not started</td></tr>
-        <tr><td class="scen">8</td><td>GW 29–32</td><td class="pending">—</td><td class="pending">—</td><td class="pending">not started</td></tr>
-        <tr><td class="scen">9</td><td>GW 33–36</td><td class="pending">—</td><td class="pending">—</td><td class="pending">not started</td></tr>
-        <tr><td class="scen">10</td><td>GW 37–38</td><td class="pending">—</td><td class="pending">—</td><td class="pending">not started</td></tr>
-        <tr><td class="scen"><b>Season</b></td><td>GW 1–38</td><td class="pending">— (+$120)</td><td class="pending">— (+$30)</td><td class="pending">not started</td></tr>
-      </tbody>
-    </table>
-  </div>
-
-  <!-- BLOCK-LEDGER:END -->
-
-  <!-- PNL:START -->
-  <h3 style="margin-top:24px">Running P&amp;L</h3>
-  <div class="card" style="padding-top:6px">
-    <table>
-      <thead>
-        <tr><th class="scen">Player</th><th>Blocks won</th><th>Blocks 2nd</th><th>Block P&amp;L</th><th>Season P&amp;L</th><th>Total</th></tr>
-      </thead>
-      <tbody>
-        <tr><td class="name">RX</td><td>0</td><td>0</td><td class="zero-net">$0</td><td class="zero-net">$0</td><td class="zero-net">$0</td></tr>
-        <tr><td class="name">AC</td><td>0</td><td>0</td><td class="zero-net">$0</td><td class="zero-net">$0</td><td class="zero-net">$0</td></tr>
-        <tr><td class="name">Willis</td><td>0</td><td>0</td><td class="zero-net">$0</td><td class="zero-net">$0</td><td class="zero-net">$0</td></tr>
-        <tr><td class="name">Kaleb</td><td>0</td><td>0</td><td class="zero-net">$0</td><td class="zero-net">$0</td><td class="zero-net">$0</td></tr>
-        <tr><td class="name">Jeremy</td><td>0</td><td>0</td><td class="zero-net">$0</td><td class="zero-net">$0</td><td class="zero-net">$0</td></tr>
-        <tr><td class="name">JR</td><td>0</td><td>0</td><td class="zero-net">$0</td><td class="zero-net">$0</td><td class="zero-net">$0</td></tr>
-        <tr><td class="name">Zac</td><td>0</td><td>0</td><td class="zero-net">$0</td><td class="zero-net">$0</td><td class="zero-net">$0</td></tr>
-      </tbody>
-    </table>
-    <div class="note">Season has not kicked off — GW1 deadline is Fri 21 Aug 2026. All figures update once blocks settle.<br>Auto-refreshed daily at 6pm SGT from the FPL API. Blocks in progress show live totals but book no P&amp;L until every gameweek in them is finalised.</div>
-  </div>
-  <!-- PNL:END -->
-
-  <div class="foot">
-    <b style="color:var(--ink)">How it settles:</b> block bets on points scored within each 4-gameweek window of the 损友俱乐部 Season 8 mini-league; the season bet on the final overall table after GW38. Ties split the combined prize for the tied positions. Scores are pulled from the official FPL API once every gameweek is finalised, so bonus points and auto-subs are always included.
-  </div>
-  </section>
-  <!-- ============ END SECTION 1 ============ -->
-
-  <!-- ============ SECTION 2 · SIDE BETS ============ -->
-  <section class="pane" id="sec-side" role="tabpanel" aria-labelledby="tab-side" hidden>
-  <h2>Side bets · title race</h2>
-  <div class="pairing">Separate from the mini-league. Six head-to-head bets on the 2026/27 final table, priced at derived implied odds. RX is on one side of four of them.</div>
-
-  <h3 style="margin-bottom:10px">ZY vs RX <span style="font-weight:400;color:var(--muted);font-size:12px">· ZY holds the stated side</span></h3>
-
-  <!-- BET 1 -->
-  <div class="card">
-    <div class="bet-head">
-      <span class="bet-title">1 · Man Utd to finish above Arsenal</span>
-      <span class="odds">3/1 &nbsp;·&nbsp; ~25%</span>
-    </div>
-    <div class="sides">
-      <div class="side zy">
-        <div class="who">ZY</div>
-        <div class="pos">Man Utd finish above Arsenal</div>
-        <div class="win">Wins → <b>+$150</b> (stake $50)</div>
-        <div class="lose">Loses → <b>−$50</b></div>
-      </div>
-      <div class="side rx">
-        <div class="who">RX</div>
-        <div class="pos">Arsenal finish above Man Utd</div>
-        <div class="win">Wins → <b>+$50</b> (lays $150)</div>
-        <div class="lose">Loses → <b>−$150</b></div>
-      </div>
-    </div>
-  </div>
-
-  <!-- BET 2 -->
-  <div class="card">
-    <div class="bet-head">
-      <span class="bet-title">2 · Arsenal will NOT win the title</span>
-      <span class="odds">5/8 &nbsp;·&nbsp; ~62%</span>
-    </div>
-    <div class="sides">
-      <div class="side zy">
-        <div class="who">ZY</div>
-        <div class="pos">Arsenal are NOT champions</div>
-        <div class="win">Wins → <b>+$31.25</b> (stake $50)</div>
-        <div class="lose">Loses → <b>−$50</b></div>
-      </div>
-      <div class="side rx">
-        <div class="who">RX</div>
-        <div class="pos">Arsenal WIN the title</div>
-        <div class="win">Wins → <b>+$50</b> (lays $31.25)</div>
-        <div class="lose">Loses → <b>−$31.25</b></div>
-      </div>
-    </div>
-  </div>
-
-  <!-- BET 3 -->
-  <div class="card">
-    <div class="bet-head">
-      <span class="bet-title">3 · Man Utd to win the title</span>
-      <span class="odds">7/1 &nbsp;·&nbsp; ~12.5%</span>
-    </div>
-    <div class="sides">
-      <div class="side zy">
-        <div class="who">ZY</div>
-        <div class="pos">Man Utd ARE champions</div>
-        <div class="win">Wins → <b>+$175</b> (stake $25)</div>
-        <div class="lose">Loses → <b>−$25</b></div>
-      </div>
-      <div class="side rx">
-        <div class="who">RX</div>
-        <div class="pos">Man Utd do NOT win</div>
-        <div class="win">Wins → <b>+$25</b> (lays $175)</div>
-        <div class="lose">Loses → <b>−$175</b></div>
-      </div>
-    </div>
-  </div>
-
-  <h3 style="margin:24px 0 10px">Jeremy vs RX <span style="font-weight:400;color:var(--muted);font-size:12px">· added 19 Aug 2026, same 7/1 price as bet 3</span></h3>
-
-  <!-- BET 4 -->
-  <div class="card">
-    <div class="bet-head">
-      <span class="bet-title">4 · Man Utd to win the title</span>
-      <span class="odds">7/1 &nbsp;·&nbsp; ~12.5%</span>
-    </div>
-    <div class="sides">
-      <div class="side jem">
-        <div class="who">Jeremy</div>
-        <div class="pos">Man Utd ARE champions</div>
-        <div class="win">Wins → <b>+$175</b> (stake $25)</div>
-        <div class="lose">Loses → <b>−$25</b></div>
-      </div>
-      <div class="side rx">
-        <div class="who">RX</div>
-        <div class="pos">Man Utd do NOT win</div>
-        <div class="win">Wins → <b>+$25</b> (lays $175)</div>
-        <div class="lose">Loses → <b>−$175</b></div>
-      </div>
-    </div>
-  </div>
-
-  <h3 style="margin:24px 0 10px">JR vs RX <span style="font-weight:400;color:var(--muted);font-size:12px">· added 21 Aug 2026</span></h3>
-
-  <!-- BET 5 -->
-  <div class="card">
-    <div class="bet-head">
-      <span class="bet-title">5 · Liverpool to finish above Arsenal</span>
-      <span class="odds">3/1 &nbsp;·&nbsp; ~25%</span>
-    </div>
-    <div class="sides">
-      <div class="side jr">
-        <div class="who">JR</div>
-        <div class="pos">Liverpool finish above Arsenal</div>
-        <div class="win">Wins → <b>+$75</b> (stake $25)</div>
-        <div class="lose">Loses → <b>−$25</b></div>
-      </div>
-      <div class="side rx">
-        <div class="who">RX</div>
-        <div class="pos">Arsenal finish above Liverpool</div>
-        <div class="win">Wins → <b>+$25</b> (lays $75)</div>
-        <div class="lose">Loses → <b>−$75</b></div>
-      </div>
-    </div>
-  </div>
-
-  <h3 style="margin:24px 0 10px">JR vs Jeremy <span style="font-weight:400;color:var(--muted);font-size:12px">· added 21 Aug 2026</span></h3>
-
-  <!-- BET 6 -->
-  <div class="card">
-    <div class="bet-head">
-      <span class="bet-title">6 · Liverpool to finish above Man Utd</span>
-      <span class="odds">1/1 &nbsp;·&nbsp; ~50%</span>
-    </div>
-    <div class="sides">
-      <div class="side jr">
-        <div class="who">JR</div>
-        <div class="pos">Liverpool finish above Man Utd</div>
-        <div class="win">Wins → <b>+$25</b> (stake $25)</div>
-        <div class="lose">Loses → <b>−$25</b></div>
-      </div>
-      <div class="side jem">
-        <div class="who">Jeremy</div>
-        <div class="pos">Man Utd finish above Liverpool</div>
-        <div class="win">Wins → <b>+$25</b> (lays $25)</div>
-        <div class="lose">Loses → <b>−$25</b></div>
-      </div>
-    </div>
-  </div>
-
-  <h3 style="margin-top:24px">Settlement · bets 1–4 <span style="font-weight:400;color:var(--muted);font-size:12px">· title race and Man Utd / Arsenal order</span></h3>
-  <div class="card" style="padding-top:6px">
-    <table>
-      <thead>
-        <tr><th class="scen">Final-table outcome</th><th>B1</th><th>B2</th><th>B3</th><th>B4</th><th>ZY net</th><th>Jeremy net</th><th>RX net</th></tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td class="scen">Man Utd win the title</td>
-          <td class="zycell">ZY</td><td class="zycell">ZY</td><td class="zycell">ZY</td><td class="jemcell">Jeremy</td>
-          <td class="pos-net">+$356.25</td><td class="pos-net">+$175.00</td><td class="neg-net">−$531.25</td>
-        </tr>
-        <tr>
-          <td class="scen">Arsenal win the title</td>
-          <td class="rxcell">RX</td><td class="rxcell">RX</td><td class="rxcell">RX</td><td class="rxcell">RX</td>
-          <td class="neg-net">−$125.00</td><td class="neg-net">−$25.00</td><td class="pos-net">+$150.00</td>
-        </tr>
-        <tr>
-          <td class="scen">Neither wins · Man Utd above Arsenal</td>
-          <td class="zycell">ZY</td><td class="zycell">ZY</td><td class="rxcell">RX</td><td class="rxcell">RX</td>
-          <td class="pos-net">+$156.25</td><td class="neg-net">−$25.00</td><td class="neg-net">−$131.25</td>
-        </tr>
-        <tr>
-          <td class="scen">Neither wins · Arsenal above Man Utd</td>
-          <td class="rxcell">RX</td><td class="zycell">ZY</td><td class="rxcell">RX</td><td class="rxcell">RX</td>
-          <td class="neg-net">−$43.75</td><td class="neg-net">−$25.00</td><td class="pos-net">+$68.75</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-
-  <h3 style="margin-top:24px">Settlement · bets 5–6 <span style="font-weight:400;color:var(--muted);font-size:12px">· where Liverpool land</span></h3>
-  <div class="card" style="padding-top:6px">
-    <table>
-      <thead>
-        <tr><th class="scen">Liverpool's finish</th><th>B5</th><th>B6</th><th>JR net</th><th>RX net</th><th>Jeremy net</th></tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td class="scen">Above Arsenal and above Man Utd</td>
-          <td class="jrcell">JR</td><td class="jrcell">JR</td>
-          <td class="pos-net">+$100.00</td><td class="neg-net">−$75.00</td><td class="neg-net">−$25.00</td>
-        </tr>
-        <tr>
-          <td class="scen">Above Arsenal, below Man Utd</td>
-          <td class="jrcell">JR</td><td class="jemcell">Jeremy</td>
-          <td class="pos-net">+$50.00</td><td class="neg-net">−$75.00</td><td class="pos-net">+$25.00</td>
-        </tr>
-        <tr>
-          <td class="scen">Below Arsenal, above Man Utd</td>
-          <td class="rxcell">RX</td><td class="jrcell">JR</td>
-          <td class="zero-net">$0.00</td><td class="pos-net">+$25.00</td><td class="neg-net">−$25.00</td>
-        </tr>
-        <tr>
-          <td class="scen">Below Arsenal and below Man Utd</td>
-          <td class="rxcell">RX</td><td class="jemcell">Jeremy</td>
-          <td class="neg-net">−$50.00</td><td class="pos-net">+$25.00</td><td class="pos-net">+$25.00</td>
-        </tr>
-      </tbody>
-    </table>
-    <div class="note">Independent of bets 1–4 — these settle purely on where Liverpool finish relative to Arsenal and Man Utd, whoever wins the title.</div>
-  </div>
-
-  <h3 style="margin-top:24px">Side-bet max exposure <span style="font-weight:400;color:var(--muted);font-size:12px">· all six bets combined</span></h3>
-  <div class="summary summary-4">
-    <div class="sbox">
-      <div class="lbl">ZY best / worst</div>
-      <div class="big" style="color:var(--good)">+$356.25</div>
-      <div class="lbl" style="margin-top:6px;color:var(--bad)">worst −$125.00</div>
-    </div>
-    <div class="sbox">
-      <div class="lbl">JR best / worst</div>
-      <div class="big" style="color:var(--good)">+$100.00</div>
-      <div class="lbl" style="margin-top:6px;color:var(--bad)">worst −$50.00</div>
-    </div>
-    <div class="sbox">
-      <div class="lbl">Jeremy best / worst</div>
-      <div class="big" style="color:var(--good)">+$200.00</div>
-      <div class="lbl" style="margin-top:6px;color:var(--bad)">worst −$50.00</div>
-    </div>
-    <div class="sbox">
-      <div class="lbl">RX best / worst</div>
-      <div class="big" style="color:var(--good)">+$175.00</div>
-      <div class="lbl" style="margin-top:6px;color:var(--bad)">worst −$606.25</div>
-    </div>
-  </div>
-
-  <div class="foot">
-    <b style="color:var(--ink)">How it settles:</b> odds are derived "fair-value" implied prices from the pre-season market (Arsenal ~38% title, Man Utd ~12.5% title, Man Utd ~25% to finish above Arsenal), not a bookmaker's quoted line. Stakes shown are each bet's backer stake; the layer's risk equals the backer's potential win. RX lays the Man Utd title at 7/1 twice over (bets 3 and 4), so a United championship costs RX $350 on that line alone. Bet 5 is priced off a latent-strength model fitted to the current title and top-four markets (Liverpool ~25% to finish above Arsenal). Bet 6 is agreed at evens as a straight coin-flip, which shades Jeremy slightly against that model's ~55% for Liverpool above Man Utd. Settled on the final 2026/27 Premier League table — independent of the mini-league.
-  </div>
-  </section>
-  <!-- ============ END SECTION 2 ============ -->
 </div>
-
-<script>
-(function(){
-  var tabs = Array.prototype.slice.call(document.querySelectorAll('.tab'));
-  function select(tab){
-    tabs.forEach(function(t){
-      var on = (t === tab);
-      t.setAttribute('aria-selected', on ? 'true' : 'false');
-      document.getElementById(t.getAttribute('aria-controls')).hidden = !on;
-    });
-    window.scrollTo(0, 0);
-  }
-  tabs.forEach(function(t){
-    t.addEventListener('click', function(){ select(t); });
-    t.addEventListener('keydown', function(e){
-      if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
-        e.preventDefault();
-        select(tabs[(tabs.indexOf(t) + 1) % tabs.length]);
-        tabs[(tabs.indexOf(t) + 1) % tabs.length].focus();
-      }
-    });
-  });
-})();
-</script>
 </body>
 </html>
