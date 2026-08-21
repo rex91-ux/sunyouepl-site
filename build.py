@@ -26,13 +26,17 @@ import sys
 import time
 import urllib.error
 import urllib.request
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 
 try:
     from zoneinfo import ZoneInfo
-    UK = ZoneInfo("Europe/London")
+    UK = ZoneInfo("Europe/London")          # deadlines, matching house style
+    SGT = ZoneInfo("Asia/Singapore")        # build stamp
 except Exception:                                    # pragma: no cover
+    # No tzdata (unlikely on ubuntu-latest). UK falls back to UTC; SGT is a
+    # fixed +08:00 year-round, so the offset form is exact.
     UK = timezone.utc
+    SGT = timezone(timedelta(hours=8))
 
 # ---------------------------------------------------------------- config
 
@@ -454,7 +458,7 @@ def render_pnl(d, stamp):
 {chr(10).join(rows)}
       </tbody>
     </table>
-    <div class="note">{note}<br>Auto-refreshed daily at 6pm SGT from the FPL API. Blocks in progress show live totals but book no P&amp;L until every gameweek in them is finalised.<br>Built {stamp} ({datetime.now(timezone.utc).strftime('%H:%M')} UTC).</div>
+    <div class="note">{note}<br>Auto-refreshed daily at 6pm SGT from the FPL API. Blocks in progress show live totals but book no P&amp;L until every gameweek in them is finalised.<br>Last built {stamp}.</div>
   </div>
 """
 
@@ -471,7 +475,8 @@ def replace_region(html, name, inner):
 
 
 def build(template, d, now):
-    stamp = now.strftime("%-d %b %Y")
+    # Date AND time, in SGT — the timezone everyone reading this page is in.
+    stamp = now.astimezone(SGT).strftime("%-d %b %Y, %H:%M SGT")
     html = template
     html = replace_region(html, "LIVE-BLOCK", render_live_block(d, stamp))
     html = replace_region(html, "BLOCK-LEDGER", render_ledger(d))
