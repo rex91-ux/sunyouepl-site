@@ -16,7 +16,7 @@
 <style>
   :root{
     --bg:#f5f7fa; --card:#ffffff; --line:#e2e6ec; --ink:#1b2027; --muted:#6a7381;
-    --zy:#1d5fd0; --rx:#c0392b; --jem:#6d3fc4; --good:#12744a; --bad:#c0392b; --accent:#9a6108;
+    --zy:#1d5fd0; --rx:#c0392b; --jem:#6d3fc4; --jr:#0c6b74; --good:#12744a; --bad:#c0392b; --accent:#9a6108;
     --shadow:0 1px 2px rgba(20,28,42,.05),0 2px 10px rgba(20,28,42,.05);
   }
   *{box-sizing:border-box}
@@ -35,7 +35,7 @@
   .sides{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
   .side{border:1px solid var(--line);border-radius:10px;padding:12px;background:#fbfcfd}
   .who{font-size:12px;font-weight:700;letter-spacing:.5px;text-transform:uppercase}
-  .zy .who{color:var(--zy)} .rx .who{color:var(--rx)} .jem .who{color:var(--jem)}
+  .zy .who{color:var(--zy)} .rx .who{color:var(--rx)} .jem .who{color:var(--jem)} .jr .who{color:var(--jr)}
   .pos{font-size:13px;color:var(--muted);margin:4px 0 8px}
   .win{font-size:13px}
   .win b{color:var(--good)} .lose b{color:var(--bad)}
@@ -50,11 +50,13 @@
   .zycell{color:var(--zy);font-weight:600}
   .rxcell{color:var(--rx);font-weight:600}
   .jemcell{color:var(--jem);font-weight:600}
+  .jrcell{color:var(--jr);font-weight:600}
   .pos-net{color:var(--good);font-weight:600}
   .neg-net{color:var(--bad);font-weight:600}
   .zero-net{color:var(--muted);font-weight:600}
   .foot{color:var(--muted);font-size:12px;margin-top:18px}
   .summary{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:6px}
+  .summary-4{grid-template-columns:repeat(4,1fr)}
   .sbox{border:1px solid var(--line);border-radius:10px;padding:14px;text-align:center;
     background:var(--card);box-shadow:var(--shadow)}
   .sbox .lbl{font-size:11.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.4px}
@@ -115,11 +117,11 @@
 <body>
 <div class="wrap">
   <h1>FPL Wagers<span class="tag">2026/27 · updated 21 Aug 2026</span></h1>
-  <div class="sub">The main mini-league bet, plus four EPL side bets on the title race.</div>
+  <div class="sub">The main mini-league bet, plus six EPL side bets on the title race and where Liverpool land.</div>
 
   <div class="tabs" role="tablist">
     <button class="tab" role="tab" id="tab-main" aria-controls="sec-main" aria-selected="true">Main bet<span class="cnt">7 players</span></button>
-    <button class="tab" role="tab" id="tab-side" aria-controls="sec-side" aria-selected="false">Side bets<span class="cnt">4 bets</span></button>
+    <button class="tab" role="tab" id="tab-side" aria-controls="sec-side" aria-selected="false">Side bets<span class="cnt">6 bets</span></button>
   </div>
 
   <!-- ============ SECTION 1 · MAIN BET ============ -->
@@ -252,7 +254,7 @@
   <!-- ============ SECTION 2 · SIDE BETS ============ -->
   <section class="pane" id="sec-side" role="tabpanel" aria-labelledby="tab-side" hidden>
   <h2>Side bets · title race</h2>
-  <div class="pairing">Separate from the mini-league. Four head-to-head bets on the 2026/27 final table, priced at derived implied odds. RX is on the other side of every one.</div>
+  <div class="pairing">Separate from the mini-league. Six head-to-head bets on the 2026/27 final table, priced at derived implied odds. RX is on one side of four of them.</div>
 
   <h3 style="margin-bottom:10px">ZY vs RX <span style="font-weight:400;color:var(--muted);font-size:12px">· ZY holds the stated side</span></h3>
 
@@ -322,7 +324,7 @@
     </div>
   </div>
 
-  <h3 style="margin:24px 0 10px">JEM vs RX <span style="font-weight:400;color:var(--muted);font-size:12px">· added 19 Aug 2026, same 7/1 price as bet 3</span></h3>
+  <h3 style="margin:24px 0 10px">Jeremy vs RX <span style="font-weight:400;color:var(--muted);font-size:12px">· added 19 Aug 2026, same 7/1 price as bet 3</span></h3>
 
   <!-- BET 4 -->
   <div class="card">
@@ -332,7 +334,7 @@
     </div>
     <div class="sides">
       <div class="side jem">
-        <div class="who">JEM</div>
+        <div class="who">Jeremy</div>
         <div class="pos">Man Utd ARE champions</div>
         <div class="win">Wins → <b>+$175</b> (stake $25)</div>
         <div class="lose">Loses → <b>−$25</b></div>
@@ -346,16 +348,64 @@
     </div>
   </div>
 
-  <h3 style="margin-top:24px">Settlement by season outcome</h3>
+  <h3 style="margin:24px 0 10px">JR vs RX <span style="font-weight:400;color:var(--muted);font-size:12px">· added 21 Aug 2026</span></h3>
+
+  <!-- BET 5 -->
+  <div class="card">
+    <div class="bet-head">
+      <span class="bet-title">5 · Liverpool to finish above Arsenal</span>
+      <span class="odds">3/1 &nbsp;·&nbsp; ~25%</span>
+    </div>
+    <div class="sides">
+      <div class="side jr">
+        <div class="who">JR</div>
+        <div class="pos">Liverpool finish above Arsenal</div>
+        <div class="win">Wins → <b>+$75</b> (stake $25)</div>
+        <div class="lose">Loses → <b>−$25</b></div>
+      </div>
+      <div class="side rx">
+        <div class="who">RX</div>
+        <div class="pos">Arsenal finish above Liverpool</div>
+        <div class="win">Wins → <b>+$25</b> (lays $75)</div>
+        <div class="lose">Loses → <b>−$75</b></div>
+      </div>
+    </div>
+  </div>
+
+  <h3 style="margin:24px 0 10px">JR vs Jeremy <span style="font-weight:400;color:var(--muted);font-size:12px">· added 21 Aug 2026</span></h3>
+
+  <!-- BET 6 -->
+  <div class="card">
+    <div class="bet-head">
+      <span class="bet-title">6 · Liverpool to finish above Man Utd</span>
+      <span class="odds">1/1 &nbsp;·&nbsp; ~50%</span>
+    </div>
+    <div class="sides">
+      <div class="side jr">
+        <div class="who">JR</div>
+        <div class="pos">Liverpool finish above Man Utd</div>
+        <div class="win">Wins → <b>+$25</b> (stake $25)</div>
+        <div class="lose">Loses → <b>−$25</b></div>
+      </div>
+      <div class="side jem">
+        <div class="who">Jeremy</div>
+        <div class="pos">Man Utd finish above Liverpool</div>
+        <div class="win">Wins → <b>+$25</b> (lays $25)</div>
+        <div class="lose">Loses → <b>−$25</b></div>
+      </div>
+    </div>
+  </div>
+
+  <h3 style="margin-top:24px">Settlement · bets 1–4 <span style="font-weight:400;color:var(--muted);font-size:12px">· title race and Man Utd / Arsenal order</span></h3>
   <div class="card" style="padding-top:6px">
     <table>
       <thead>
-        <tr><th class="scen">Final-table outcome</th><th>B1</th><th>B2</th><th>B3</th><th>B4</th><th>ZY net</th><th>JEM net</th><th>RX net</th></tr>
+        <tr><th class="scen">Final-table outcome</th><th>B1</th><th>B2</th><th>B3</th><th>B4</th><th>ZY net</th><th>Jeremy net</th><th>RX net</th></tr>
       </thead>
       <tbody>
         <tr>
           <td class="scen">Man Utd win the title</td>
-          <td class="zycell">ZY</td><td class="zycell">ZY</td><td class="zycell">ZY</td><td class="jemcell">JEM</td>
+          <td class="zycell">ZY</td><td class="zycell">ZY</td><td class="zycell">ZY</td><td class="jemcell">Jeremy</td>
           <td class="pos-net">+$356.25</td><td class="pos-net">+$175.00</td><td class="neg-net">−$531.25</td>
         </tr>
         <tr>
@@ -377,27 +427,64 @@
     </table>
   </div>
 
-  <h3 style="margin-top:24px">Side-bet max exposure</h3>
-  <div class="summary">
+  <h3 style="margin-top:24px">Settlement · bets 5–6 <span style="font-weight:400;color:var(--muted);font-size:12px">· where Liverpool land</span></h3>
+  <div class="card" style="padding-top:6px">
+    <table>
+      <thead>
+        <tr><th class="scen">Liverpool's finish</th><th>B5</th><th>B6</th><th>JR net</th><th>RX net</th><th>Jeremy net</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="scen">Above Arsenal and above Man Utd</td>
+          <td class="jrcell">JR</td><td class="jrcell">JR</td>
+          <td class="pos-net">+$100.00</td><td class="neg-net">−$75.00</td><td class="neg-net">−$25.00</td>
+        </tr>
+        <tr>
+          <td class="scen">Above Arsenal, below Man Utd</td>
+          <td class="jrcell">JR</td><td class="jemcell">Jeremy</td>
+          <td class="pos-net">+$50.00</td><td class="neg-net">−$75.00</td><td class="pos-net">+$25.00</td>
+        </tr>
+        <tr>
+          <td class="scen">Below Arsenal, above Man Utd</td>
+          <td class="rxcell">RX</td><td class="jrcell">JR</td>
+          <td class="zero-net">$0.00</td><td class="pos-net">+$25.00</td><td class="neg-net">−$25.00</td>
+        </tr>
+        <tr>
+          <td class="scen">Below Arsenal and below Man Utd</td>
+          <td class="rxcell">RX</td><td class="jemcell">Jeremy</td>
+          <td class="neg-net">−$50.00</td><td class="pos-net">+$25.00</td><td class="pos-net">+$25.00</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="note">Independent of bets 1–4 — these settle purely on where Liverpool finish relative to Arsenal and Man Utd, whoever wins the title.</div>
+  </div>
+
+  <h3 style="margin-top:24px">Side-bet max exposure <span style="font-weight:400;color:var(--muted);font-size:12px">· all six bets combined</span></h3>
+  <div class="summary summary-4">
     <div class="sbox">
       <div class="lbl">ZY best / worst</div>
       <div class="big" style="color:var(--good)">+$356.25</div>
       <div class="lbl" style="margin-top:6px;color:var(--bad)">worst −$125.00</div>
     </div>
     <div class="sbox">
-      <div class="lbl">JEM best / worst</div>
-      <div class="big" style="color:var(--good)">+$175.00</div>
-      <div class="lbl" style="margin-top:6px;color:var(--bad)">worst −$25.00</div>
+      <div class="lbl">JR best / worst</div>
+      <div class="big" style="color:var(--good)">+$100.00</div>
+      <div class="lbl" style="margin-top:6px;color:var(--bad)">worst −$50.00</div>
+    </div>
+    <div class="sbox">
+      <div class="lbl">Jeremy best / worst</div>
+      <div class="big" style="color:var(--good)">+$200.00</div>
+      <div class="lbl" style="margin-top:6px;color:var(--bad)">worst −$50.00</div>
     </div>
     <div class="sbox">
       <div class="lbl">RX best / worst</div>
-      <div class="big" style="color:var(--good)">+$150.00</div>
-      <div class="lbl" style="margin-top:6px;color:var(--bad)">worst −$531.25</div>
+      <div class="big" style="color:var(--good)">+$175.00</div>
+      <div class="lbl" style="margin-top:6px;color:var(--bad)">worst −$606.25</div>
     </div>
   </div>
 
   <div class="foot">
-    <b style="color:var(--ink)">How it settles:</b> odds are derived "fair-value" implied prices from the pre-season market (Arsenal ~38% title, Man Utd ~12.5% title, Man Utd ~25% to finish above Arsenal), not a bookmaker's quoted line. Stakes shown are each bet's backer stake; the layer's risk equals the backer's potential win. RX lays the Man Utd title at 7/1 twice over (bets 3 and 4), so a United championship costs RX $350 on that line alone. Settled on the final 2026/27 Premier League table — independent of the mini-league.
+    <b style="color:var(--ink)">How it settles:</b> odds are derived "fair-value" implied prices from the pre-season market (Arsenal ~38% title, Man Utd ~12.5% title, Man Utd ~25% to finish above Arsenal), not a bookmaker's quoted line. Stakes shown are each bet's backer stake; the layer's risk equals the backer's potential win. RX lays the Man Utd title at 7/1 twice over (bets 3 and 4), so a United championship costs RX $350 on that line alone. Bet 5 is priced off a latent-strength model fitted to the current title and top-four markets (Liverpool ~25% to finish above Arsenal). Bet 6 is agreed at evens as a straight coin-flip, which shades Jeremy slightly against that model's ~55% for Liverpool above Man Utd. Settled on the final 2026/27 Premier League table — independent of the mini-league.
   </div>
   </section>
   <!-- ============ END SECTION 2 ============ -->
