@@ -1,0 +1,43 @@
+name: Rebuild wagers page
+
+on:
+  schedule:
+    # 10:00 UTC daily = 6pm SGT. GitHub cron can run a few minutes late.
+    - cron: '0 10 * * *'
+  workflow_dispatch:        # lets you trigger a rebuild by hand from the Actions tab
+  push:
+    paths:                  # rebuild immediately when the generator changes
+      - 'build.py'
+      - '.github/workflows/update.yml'
+
+permissions:
+  contents: write           # required so the job can commit index.html back
+
+concurrency:
+  group: rebuild
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Build index.html
+        run: python3 build.py
+
+      - name: Commit if changed
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          if git diff --staged --quiet; then
+            echo "no change - nothing to commit"
+          else
+            git commit -m "Rebuild wagers page ($(date -u '+%Y-%m-%d %H:%M UTC'))"
+            git push
+          fi
