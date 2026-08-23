@@ -2,8 +2,8 @@ name: Rebuild wagers page
 
 on:
   schedule:
-    # 10:00 UTC daily = 6pm SGT. GitHub cron can run a few minutes late.
-    - cron: '0 10 * * *'
+    # 23:00 UTC daily = 7am SGT the next day. GitHub cron can run a few minutes late.
+    - cron: '0 23 * * *'
   workflow_dispatch:        # lets you trigger a rebuild by hand from the Actions tab
   push:
     paths:                  # rebuild immediately when the design or generator changes
