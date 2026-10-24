@@ -12,6 +12,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
 <title>FPL Wagers</title>
 <style>
   :root{
@@ -111,12 +112,27 @@
   .tab[aria-selected="true"] .cnt{color:var(--accent)}
   .pane[hidden]{display:none}
   .pane h2:first-of-type{border-top:none;padding-top:0}
+  /* settled-block expander */
+  tr.blk{cursor:pointer}
+  tr.blk:hover td{background:#f2f5f9}
+  tr.blk td.scen .chev{display:inline-block;width:11px;margin-right:6px;color:var(--muted);
+    transition:transform .15s;font-size:10px}
+  tr.blk[aria-expanded="true"] td.scen .chev{transform:rotate(90deg)}
+  tr.blk[aria-expanded="true"] td{background:#eef2f7}
+  tr.blk-detail>td{padding:0;border-bottom:1px solid var(--line);background:#fafbfd}
+  tr.blk-detail[hidden]{display:none}
+  .blk-inner{padding:12px 14px 14px}
+  .blk-inner .cap{font-size:11.5px;color:var(--muted);margin-bottom:2px}
+  .blk-inner table{margin-top:6px}
+  .blk-inner th,.blk-inner td{padding:7px 8px}
+  .blk-inner tr.wk-leader td{background:#eef7f2}
+  .blk-inner td.best{color:var(--good);font-weight:700}
   @media(max-width:620px){.summary,.pots{grid-template-columns:1fr}.sides{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
 <div class="wrap">
-  <h1>FPL Wagers<span class="tag">2026/27 · updated 24 Oct 2026, 12:06 SGT</span></h1>
+  <h1>FPL Wagers<span class="tag">2026/27 · updated 24 Oct 2026, 12:08 SGT</span></h1>
   <div class="sub">The main mini-league bet, plus six EPL side bets on the title race and where Liverpool land.</div>
 
   <div class="tabs" role="tablist">
@@ -162,7 +178,7 @@
       <span class="hero-title">Live · Block 2 <span style="color:var(--muted);font-weight:500">· GW 5–8</span></span>
       <span class="pill prog">in progress · 3 of 4 GWs final</span>
     </div>
-    <div class="asof">GW8 live · next deadline Sat 31 Oct 2026, 11:00 UK. Updated 24 Oct 2026, 12:06 SGT. Refreshes daily at 6pm SGT.</div>
+    <div class="asof">GW8 live · next deadline Sat 31 Oct 2026, 11:00 UK. Updated 24 Oct 2026, 12:08 SGT. Refreshes daily at 6pm SGT.</div>
     <table class="live-tbl">
       <thead>
         <tr><th class="scen">#</th><th class="scen">Player</th><th>GW5</th><th>GW6</th><th>GW7</th><th>GW8</th><th>Block pts</th><th>Gap</th><th>If it ended now</th></tr>
@@ -185,16 +201,16 @@
   <div class="card" style="padding-top:6px">
     <table>
       <thead>
-        <tr><th class="scen">Player</th><th class="scen">FPL team</th><th class="scen">Registered as</th></tr>
+        <tr><th class="scen">Player</th><th class="scen">FPL team</th></tr>
       </thead>
       <tbody>
-        <tr><td class="name">RX</td><td class="team">I Call Pzolis</td><td class="team">Ah Ren Xuan Tan</td></tr>
-        <tr><td class="name">AC</td><td class="team">Bo tah bo Lampard</td><td class="team">Aaron Choo</td></tr>
-        <tr><td class="name">Willis</td><td class="team">WNYQ</td><td class="team">Willis Ng</td></tr>
-        <tr><td class="name">Kaleb</td><td class="team">greatgrandfather2026</td><td class="team">kaleb Chan</td></tr>
-        <tr><td class="name">Jeremy</td><td class="team">Michael Carry!</td><td class="team">Jeremy Teo</td></tr>
-        <tr><td class="name">JR</td><td class="team">Salah liao</td><td class="team">Jun Rong Foo</td></tr>
-        <tr><td class="name">Zac</td><td class="team">One Andoni One</td><td class="team">Zhong Jie Zac Tan</td></tr>
+        <tr><td class="name">RX</td><td class="team">I Call Pzolis</td></tr>
+        <tr><td class="name">AC</td><td class="team">Bo tah bo Lampard</td></tr>
+        <tr><td class="name">Willis</td><td class="team">WNYQ</td></tr>
+        <tr><td class="name">Kaleb</td><td class="team">greatgrandfather2026</td></tr>
+        <tr><td class="name">Jeremy</td><td class="team">Michael Carry!</td></tr>
+        <tr><td class="name">JR</td><td class="team">Salah liao</td></tr>
+        <tr><td class="name">Zac</td><td class="team">One Andoni One</td></tr>
       </tbody>
     </table>
   </div>
@@ -257,7 +273,7 @@
         <tr><td class="name">Zac</td><td>0</td><td>0</td><td class="neg-net">−$10</td><td class="zero-net">$0</td><td class="neg-net">−$10</td></tr>
       </tbody>
     </table>
-    <div class="note">1 of 10 blocks booked · 7/38 gameweeks final.<br>Auto-refreshed daily at 6pm SGT from the FPL API. Blocks in progress show live totals but book no P&amp;L until every gameweek in them is finalised.<br>Last built 24 Oct 2026, 12:06 SGT.</div>
+    <div class="note">1 of 10 blocks booked · 7/38 gameweeks final.<br>Auto-refreshed daily at 6pm SGT from the FPL API. Blocks in progress show live totals but book no P&amp;L until every gameweek in them is finalised.<br>Last built 24 Oct 2026, 12:08 SGT.</div>
   </div>
   <!-- PNL:END -->
 
@@ -527,8 +543,22 @@
       }
     });
   });
+  // settled block rows expand to show that block's gameweek-by-gameweek scores
+  Array.prototype.slice.call(document.querySelectorAll('tr.blk')).forEach(function(row){
+    function toggle(){
+      var d = document.getElementById(row.getAttribute('aria-controls'));
+      if (!d) return;
+      var open = row.getAttribute('aria-expanded') === 'true';
+      row.setAttribute('aria-expanded', open ? 'false' : 'true');
+      d.hidden = open;
+    }
+    row.addEventListener('click', toggle);
+    row.addEventListener('keydown', function(e){
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); }
+    });
+  });
 })();
 </script>
 </body>
-<!-- built-utc: 2026-10-24T04:06:37Z -->
+<!-- built-utc: 2026-10-24T04:08:01Z -->
 </html>
